@@ -311,10 +311,6 @@ var DeckForm = function DeckForm(props) {
     }
   }, []);
 
-  function getLogo() {
-    ReactDOM.findDOMNode();
-  }
-
   var _useState = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])([]),
       _useState2 = _slicedToArray(_useState, 2),
       wordList = _useState2[0],

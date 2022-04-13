@@ -7,10 +7,6 @@ const DeckForm = props => {
     {console.log(document)}
   }, [])
 
-  function getLogo(){
-    ReactDOM.findDOMNode()
-  }
-
   const [wordList, setWordList] = useState([])
 
   return(
