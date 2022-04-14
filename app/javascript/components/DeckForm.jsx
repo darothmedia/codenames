@@ -2,12 +2,20 @@ import React, {useState, useEffect} from 'react';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 
-const DeckForm = props => {
+const DeckForm = () => {
   useEffect(() => {
-    {console.log(document)}
   }, [])
 
-  const [wordList, setWordList] = useState([])
+  const [wordList, setWordList] = useState("")
+
+  function formSubmit(){
+    let split = wordList.split(/[, \n]+/)
+    console.log(split)
+  }
+
+  function formChange(e){
+    setWordList(e.target.value)
+  }
 
   return(
     <div id='lobby-page-container' className="primary-color d-flex align-items-center justify-content-center">
@@ -16,12 +24,12 @@ const DeckForm = props => {
           <p className="lead">
             Enter words, one per line:
           </p>
-          <Form>
+          <Form onSubmit={formSubmit}>
             <Form.Group>
-              <Form.Control as="textarea" rows={10} />
+              <Form.Control value={wordList} onChange={formChange} as="textarea" rows={10} />
             </Form.Group>
           </Form>
-          <Button variant="primary" type="submit">
+          <Button variant="primary" type="submit" onClick={formSubmit}>
             Submit
           </Button>
         </div>
