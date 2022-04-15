@@ -10,16 +10,16 @@ const receiveDeck = deck => ({
   deck
 })
 
-const receiveErrors = errors => ({
+const receiveErrors = error => ({
   type: RECEIVE_ERRORS,
-  errors
+  error
 })
 
-const clearErrors = () => ({
+export const clearErrors = () => ({
   type: CLEAR_ERRORS
 })
 
 export const createDeck = deck => dispatch => APIUtil.createDeck(deck)
   .then(deck => dispatch(receiveDeck(deck)),
-    error => dispatch(receiveErrors(error.responseJSON))
+    error => dispatch(receiveErrors(error))
   );

@@ -1,16 +1,26 @@
 import React, {useState, useEffect} from 'react';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
+import { createDeck } from '../actions/deck_actions';
+import { connect } from 'react-redux';
 
-const DeckForm = () => {
+
+const mSTP = state => ({})
+const mDTP = dispatch => ({
+  createDeck: deck => dispatch(createDeck(deck)),
+  clearErrors: errors => dispatch(clearErrors(errors))
+})
+
+const DeckForm = props => {
   useEffect(() => {
   }, [])
 
   const [wordList, setWordList] = useState("")
+  const {createDeck, clearErrors} = props
 
   function formSubmit(){
     let split = wordList.split(/[, \n]+/)
-    console.log(split)
+    createDeck(split)
   }
 
   function formChange(e){
@@ -38,5 +48,5 @@ const DeckForm = () => {
   )
 }
 
-export default DeckForm
+export default connect(mSTP, mDTP)(DeckForm)
 
