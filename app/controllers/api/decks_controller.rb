@@ -12,7 +12,7 @@ module API
     def create
       @deck = Deck.new(deck_params)
       if @deck.save
-        render :create
+        render json: @deck
       else
         render json: @deck.errors.full_messages, status: 422
       end
@@ -20,7 +20,7 @@ module API
 
     private
     def deck_params
-      params.permit(:name, :is_private, :num_cards_included)
+      params.permit(:name, :is_private, :num_cards_included, :input_cards)
     end
 
   end

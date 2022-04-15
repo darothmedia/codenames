@@ -14,31 +14,31 @@ const mDTP = dispatch => ({
 
 const DeckForm = props => {
   useEffect(() => {
-    // fetchDecks()
-    console.log(deckInfo)
-  }, [deckInfo])
+  }, [])
 
-  const [wordList, setWordList] = useState("")
   const [deckInfo, setDeckInfo] = useState({
-    cards: [],
-    name: "",
-    is_private: true,
-    num_cards_included: 0
+    wordList: "",
+    name: ""
   })
   const {createDeck, clearErrors, fetchDecks} = props
 
   function formSubmit(){
-    let split = wordList.split(/[, \n]+/)
-    setDeckInfo({ ...deckInfo, num_cards_included: split.length })
-    setDeckInfo({...deckInfo, cards: split}, 
-        console.log(deckInfo)
-    );
+    let split = deckInfo.wordList.split(/[, \n]+/)
+    let newDeck = {
+      input_cards: deckInfo.wordList,
+      name: deckInfo.name,
+      is_private: true,
+      num_cards_included: split.length
+    }
+    createDeck(newDeck)
   }
 
 
 
   function formChange(type, e){
-    type === 'list' ? setWordList(e.target.value) : setDeckInfo({...deckInfo, name: e.target.value})
+    type === 'list' ? 
+      setDeckInfo({ ...deckInfo, wordList: e.target.value }) 
+      : setDeckInfo({...deckInfo, name: e.target.value})
   }
 
   return(
@@ -50,7 +50,7 @@ const DeckForm = props => {
           </p>
           <Form onSubmit={formSubmit}>
             <Form.Group>
-              <Form.Control value={wordList} onChange={(e) => formChange('list', e)} as="textarea" rows={10} />
+              <Form.Control value={deckInfo.wordList} onChange={(e) => formChange('list', e)} as="textarea" rows={10} />
             </Form.Group>
             <Form.Group>
               <Form.Label>Name this Deck!</Form.Label>

@@ -447,42 +447,35 @@ var mDTP = function mDTP(dispatch) {
 };
 
 var DeckForm = function DeckForm(props) {
-  Object(react__WEBPACK_IMPORTED_MODULE_0__["useEffect"])(function () {
-    // fetchDecks()
-    console.log(deckInfo);
-  }, [deckInfo]);
+  Object(react__WEBPACK_IMPORTED_MODULE_0__["useEffect"])(function () {}, []);
 
-  var _useState = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])(""),
-      _useState2 = _slicedToArray(_useState, 2),
-      wordList = _useState2[0],
-      setWordList = _useState2[1];
-
-  var _useState3 = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])({
-    cards: [],
-    name: "",
-    is_private: true,
-    num_cards_included: 0
+  var _useState = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])({
+    wordList: "",
+    name: ""
   }),
-      _useState4 = _slicedToArray(_useState3, 2),
-      deckInfo = _useState4[0],
-      setDeckInfo = _useState4[1];
+      _useState2 = _slicedToArray(_useState, 2),
+      deckInfo = _useState2[0],
+      setDeckInfo = _useState2[1];
 
   var createDeck = props.createDeck,
       clearErrors = props.clearErrors,
       fetchDecks = props.fetchDecks;
 
   function formSubmit() {
-    var split = wordList.split(/[, \n]+/);
-    setDeckInfo(_objectSpread({}, deckInfo, {
+    var split = deckInfo.wordList.split(/[, \n]+/);
+    var newDeck = {
+      input_cards: deckInfo.wordList,
+      name: deckInfo.name,
+      is_private: true,
       num_cards_included: split.length
-    }));
-    setDeckInfo(_objectSpread({}, deckInfo, {
-      cards: split
-    }), console.log(deckInfo));
+    };
+    createDeck(newDeck);
   }
 
   function formChange(type, e) {
-    type === 'list' ? setWordList(e.target.value) : setDeckInfo(_objectSpread({}, deckInfo, {
+    type === 'list' ? setDeckInfo(_objectSpread({}, deckInfo, {
+      wordList: e.target.value
+    })) : setDeckInfo(_objectSpread({}, deckInfo, {
       name: e.target.value
     }));
   }
@@ -499,7 +492,7 @@ var DeckForm = function DeckForm(props) {
   }, "Enter words, one per line:"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap_Form__WEBPACK_IMPORTED_MODULE_1__["default"], {
     onSubmit: formSubmit
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap_Form__WEBPACK_IMPORTED_MODULE_1__["default"].Group, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap_Form__WEBPACK_IMPORTED_MODULE_1__["default"].Control, {
-    value: wordList,
+    value: deckInfo.wordList,
     onChange: function onChange(e) {
       return formChange('list', e);
     },
@@ -1421,9 +1414,7 @@ var createDeck = function createDeck(deck) {
   return $.ajax({
     url: "/api/decks",
     type: "POST",
-    data: {
-      deck: deck
-    }
+    data: deck
   });
 };
 var getDecks = function getDecks() {

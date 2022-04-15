@@ -11,12 +11,16 @@ class Deck < ApplicationRecord
   scope :where_public, -> { where(is_private: false) }
 
   def cards
-    path = if is_private
+    if self.input_cards
+      self.input_cards.split(/[, \n]+/).map(&:upcase)
+    else
+      path = if is_private
              Rails.root.join("app/assets/decks/private/#{name}.txt")
             else
               Rails.root.join("app/assets/decks/#{name}.txt")
            end
 
-    File.read(path).split("\n").map(&:upcase)
+      File.read(path).split("\n").map(&:upcase)
+    end
   end
 end
