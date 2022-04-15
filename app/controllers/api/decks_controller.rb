@@ -1,10 +1,12 @@
 module API
   class DecksController < ApplicationController
     def index
+      allDecks = Deck.all
       decks = Deck.where_custom
       decks = decks.where_public if params[:include_private_decks] == 'false'
 
       render json: { decks: decks.to_json(only: [:id, :name, :is_private]) }
+      # render json: allDecks
     end
 
     def create
@@ -18,7 +20,7 @@ module API
 
     private
     def deck_params
-      params.require(:deck).permit(:name, :is_private, :num_cards_included)
+      params.permit(:name, :is_private, :num_cards_included)
     end
 
   end

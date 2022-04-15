@@ -90,19 +90,22 @@
 /*!************************************************!*\
   !*** ./app/javascript/actions/deck_actions.js ***!
   \************************************************/
-/*! exports provided: RECEIVE_DECK, RECEIVE_ERRORS, CLEAR_ERRORS, clearErrors, createDeck */
+/*! exports provided: RECEIVE_DECK, RECEIVE_ALL_DECKS, RECEIVE_ERRORS, CLEAR_ERRORS, clearErrors, createDeck, fetchDecks */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "RECEIVE_DECK", function() { return RECEIVE_DECK; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "RECEIVE_ALL_DECKS", function() { return RECEIVE_ALL_DECKS; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "RECEIVE_ERRORS", function() { return RECEIVE_ERRORS; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CLEAR_ERRORS", function() { return CLEAR_ERRORS; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "clearErrors", function() { return clearErrors; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createDeck", function() { return createDeck; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "fetchDecks", function() { return fetchDecks; });
 /* harmony import */ var _util_deck_api_util__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../util/deck_api_util */ "./app/javascript/util/deck_api_util.js");
 
 var RECEIVE_DECK = 'RECEIVE_DECK';
+var RECEIVE_ALL_DECKS = 'RECEIVE_ALL_DECKS';
 var RECEIVE_ERRORS = 'RECEIVE_ERRORS';
 var CLEAR_ERRORS = 'CLEAR_ERRORS';
 
@@ -110,6 +113,13 @@ var receiveDeck = function receiveDeck(deck) {
   return {
     type: RECEIVE_DECK,
     deck: deck
+  };
+};
+
+var receiveAllDecks = function receiveAllDecks(decks) {
+  return {
+    type: RECEIVE_ALL_DECKS,
+    decks: decks
   };
 };
 
@@ -129,6 +139,15 @@ var createDeck = function createDeck(deck) {
   return function (dispatch) {
     return _util_deck_api_util__WEBPACK_IMPORTED_MODULE_0__["createDeck"](deck).then(function (deck) {
       return dispatch(receiveDeck(deck));
+    }, function (error) {
+      return dispatch(receiveErrors(error));
+    });
+  };
+};
+var fetchDecks = function fetchDecks() {
+  return function (dispatch) {
+    return _util_deck_api_util__WEBPACK_IMPORTED_MODULE_0__["getDecks"]().then(function (decks) {
+      return dispatch(receiveAllDecks(decks));
     }, function (error) {
       return dispatch(receiveErrors(error));
     });
@@ -375,6 +394,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react_bootstrap_Button__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-bootstrap/Button */ "./node_modules/react-bootstrap/esm/Button.js");
 /* harmony import */ var _actions_deck_actions__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../actions/deck_actions */ "./app/javascript/actions/deck_actions.js");
 /* harmony import */ var react_redux__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! react-redux */ "./node_modules/react-redux/es/index.js");
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
 
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
@@ -414,28 +439,52 @@ var mDTP = function mDTP(dispatch) {
       return clearErrors;
     }(function (errors) {
       return dispatch(clearErrors(errors));
-    })
+    }),
+    fetchDecks: function fetchDecks() {
+      return dispatch(Object(_actions_deck_actions__WEBPACK_IMPORTED_MODULE_3__["fetchDecks"])());
+    }
   };
 };
 
 var DeckForm = function DeckForm(props) {
-  Object(react__WEBPACK_IMPORTED_MODULE_0__["useEffect"])(function () {}, []);
+  Object(react__WEBPACK_IMPORTED_MODULE_0__["useEffect"])(function () {
+    // fetchDecks()
+    console.log(deckInfo);
+  }, [deckInfo]);
 
   var _useState = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])(""),
       _useState2 = _slicedToArray(_useState, 2),
       wordList = _useState2[0],
       setWordList = _useState2[1];
 
+  var _useState3 = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])({
+    cards: [],
+    name: "",
+    is_private: true,
+    num_cards_included: 0
+  }),
+      _useState4 = _slicedToArray(_useState3, 2),
+      deckInfo = _useState4[0],
+      setDeckInfo = _useState4[1];
+
   var createDeck = props.createDeck,
-      clearErrors = props.clearErrors;
+      clearErrors = props.clearErrors,
+      fetchDecks = props.fetchDecks;
 
   function formSubmit() {
     var split = wordList.split(/[, \n]+/);
-    createDeck(split);
+    setDeckInfo(_objectSpread({}, deckInfo, {
+      num_cards_included: split.length
+    }));
+    setDeckInfo(_objectSpread({}, deckInfo, {
+      cards: split
+    }), console.log(deckInfo));
   }
 
-  function formChange(e) {
-    setWordList(e.target.value);
+  function formChange(type, e) {
+    type === 'list' ? setWordList(e.target.value) : setDeckInfo(_objectSpread({}, deckInfo, {
+      name: e.target.value
+    }));
   }
 
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
@@ -451,9 +500,16 @@ var DeckForm = function DeckForm(props) {
     onSubmit: formSubmit
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap_Form__WEBPACK_IMPORTED_MODULE_1__["default"].Group, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap_Form__WEBPACK_IMPORTED_MODULE_1__["default"].Control, {
     value: wordList,
-    onChange: formChange,
+    onChange: function onChange(e) {
+      return formChange('list', e);
+    },
     as: "textarea",
     rows: 10
+  })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap_Form__WEBPACK_IMPORTED_MODULE_1__["default"].Group, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap_Form__WEBPACK_IMPORTED_MODULE_1__["default"].Label, null, "Name this Deck!"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap_Form__WEBPACK_IMPORTED_MODULE_1__["default"].Control, {
+    value: deckInfo.name,
+    onChange: function onChange(e) {
+      return formChange('name', e);
+    }
   }))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap_Button__WEBPACK_IMPORTED_MODULE_2__["default"], {
     variant: "primary",
     type: "submit",
@@ -1218,7 +1274,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 var _require = __webpack_require__(/*! ../actions/deck_actions */ "./app/javascript/actions/deck_actions.js"),
     RECEIVE_DECK = _require.RECEIVE_DECK,
-    RECEIVE_ERRORS = _require.RECEIVE_ERRORS;
+    RECEIVE_ERRORS = _require.RECEIVE_ERRORS,
+    RECEIVE_ALL_DECKS = _require.RECEIVE_ALL_DECKS;
 
 var DeckReducer = function DeckReducer() {
   var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
@@ -1228,6 +1285,9 @@ var DeckReducer = function DeckReducer() {
   switch (action.type) {
     case RECEIVE_DECK:
       return Object.assign({}, state, _defineProperty({}, action.deck.id, action.deck));
+
+    case RECEIVE_ALL_DECKS:
+      return action.decks;
 
     default:
       return state;
@@ -1350,12 +1410,13 @@ __webpack_require__.r(__webpack_exports__);
 /*!**********************************************!*\
   !*** ./app/javascript/util/deck_api_util.js ***!
   \**********************************************/
-/*! exports provided: createDeck */
+/*! exports provided: createDeck, getDecks */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createDeck", function() { return createDeck; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getDecks", function() { return getDecks; });
 var createDeck = function createDeck(deck) {
   return $.ajax({
     url: "/api/decks",
@@ -1363,6 +1424,12 @@ var createDeck = function createDeck(deck) {
     data: {
       deck: deck
     }
+  });
+};
+var getDecks = function getDecks() {
+  return $.ajax({
+    url: "/api/decks",
+    type: "GET"
   });
 };
 

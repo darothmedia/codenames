@@ -5,3 +5,10 @@ export const createDeck = (deck) => (
     data: {deck}
   })
 )
+
+export const getDecks = () => (
+  $.ajax({
+    url: `/api/decks`,
+    type: `GET`
+  })
+)
