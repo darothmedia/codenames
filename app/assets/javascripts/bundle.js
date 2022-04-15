@@ -86,6 +86,57 @@
 /************************************************************************/
 /******/ ({
 
+/***/ "./app/javascript/actions/deck_actions.js":
+/*!************************************************!*\
+  !*** ./app/javascript/actions/deck_actions.js ***!
+  \************************************************/
+/*! exports provided: RECEIVE_DECK, RECEIVE_ERRORS, CLEAR_ERRORS, createDeck */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "RECEIVE_DECK", function() { return RECEIVE_DECK; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "RECEIVE_ERRORS", function() { return RECEIVE_ERRORS; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CLEAR_ERRORS", function() { return CLEAR_ERRORS; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createDeck", function() { return createDeck; });
+/* harmony import */ var _util_deck_api_util__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../util/deck_api_util */ "./app/javascript/util/deck_api_util.js");
+
+var RECEIVE_DECK = 'RECEIVE_DECK';
+var RECEIVE_ERRORS = 'RECEIVE_ERRORS';
+var CLEAR_ERRORS = 'CLEAR_ERRORS';
+
+var receiveDeck = function receiveDeck(deck) {
+  return {
+    type: RECEIVE_DECK,
+    deck: deck
+  };
+};
+
+var receiveErrors = function receiveErrors(errors) {
+  return {
+    type: RECEIVE_ERRORS,
+    errors: errors
+  };
+};
+
+var clearErrors = function clearErrors() {
+  return {
+    type: CLEAR_ERRORS
+  };
+};
+
+var createDeck = function createDeck(deck) {
+  return function (dispatch) {
+    return _util_deck_api_util__WEBPACK_IMPORTED_MODULE_0__["createDeck"](deck).then(function (deck) {
+      return dispatch(receiveDeck(deck));
+    }, function (error) {
+      return dispatch(receiveErrors(error.responseJSON));
+    });
+  };
+};
+
+/***/ }),
+
 /***/ "./app/javascript/channels/store.js":
 /*!******************************************!*\
   !*** ./app/javascript/channels/store.js ***!
@@ -1115,6 +1166,75 @@ document.addEventListener("DOMContentLoaded", function () {
 
 /***/ }),
 
+/***/ "./app/javascript/reducers/deck_reducer.js":
+/*!*************************************************!*\
+  !*** ./app/javascript/reducers/deck_reducer.js ***!
+  \*************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+var _require = __webpack_require__(/*! ../actions/deck_actions */ "./app/javascript/actions/deck_actions.js"),
+    RECEIVE_DECK = _require.RECEIVE_DECK,
+    RECEIVE_ERRORS = _require.RECEIVE_ERRORS;
+
+var DeckReducer = function DeckReducer() {
+  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  var action = arguments.length > 1 ? arguments[1] : undefined;
+  Object.freeze(state);
+
+  switch (action.type) {
+    case RECEIVE_DECK:
+      return Object.assign({}, state, _defineProperty({}, action.deck.id, action.deck));
+
+    default:
+      return state;
+  }
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (DeckReducer);
+
+/***/ }),
+
+/***/ "./app/javascript/reducers/errors_reducer.js":
+/*!***************************************************!*\
+  !*** ./app/javascript/reducers/errors_reducer.js ***!
+  \***************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+var _require = __webpack_require__(/*! ../actions/deck_actions */ "./app/javascript/actions/deck_actions.js"),
+    RECEIVE_ERRORS = _require.RECEIVE_ERRORS,
+    CLEAR_ERRORS = _require.CLEAR_ERRORS;
+
+var ErrorsReducer = function ErrorsReducer() {
+  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  var action = arguments.length > 1 ? arguments[1] : undefined;
+  Object.freeze(state);
+
+  switch (action.type) {
+    case RECEIVE_ERRORS:
+      return action.errors;
+
+    case CLEAR_ERRORS:
+      return {};
+
+    default:
+      return state;
+  }
+
+  ;
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (ErrorsReducer);
+
+/***/ }),
+
 /***/ "./app/javascript/reducers/root_reducer.js":
 /*!*************************************************!*\
   !*** ./app/javascript/reducers/root_reducer.js ***!
@@ -1124,9 +1244,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-function rootReducer() {}
+/* harmony import */ var redux__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! redux */ "./node_modules/redux/es/redux.js");
+/* harmony import */ var _deck_reducer__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./deck_reducer */ "./app/javascript/reducers/deck_reducer.js");
+/* harmony import */ var _errors_reducer__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./errors_reducer */ "./app/javascript/reducers/errors_reducer.js");
 
-/* harmony default export */ __webpack_exports__["default"] = (rootReducer);
+
+
+var RootReducer = Object(redux__WEBPACK_IMPORTED_MODULE_0__["combineReducers"])({
+  decks: _deck_reducer__WEBPACK_IMPORTED_MODULE_1__["default"],
+  errors: _errors_reducer__WEBPACK_IMPORTED_MODULE_2__["default"]
+});
+/* harmony default export */ __webpack_exports__["default"] = (RootReducer);
 
 /***/ }),
 
@@ -1174,6 +1302,28 @@ __webpack_require__.r(__webpack_exports__);
   path: "/:gameId",
   component: _components_Game__WEBPACK_IMPORTED_MODULE_3__["default"]
 })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_snowfall__WEBPACK_IMPORTED_MODULE_5___default.a, null)));
+
+/***/ }),
+
+/***/ "./app/javascript/util/deck_api_util.js":
+/*!**********************************************!*\
+  !*** ./app/javascript/util/deck_api_util.js ***!
+  \**********************************************/
+/*! exports provided: createDeck */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createDeck", function() { return createDeck; });
+var createDeck = function createDeck(deck) {
+  return $.ajax({
+    url: "/api/decks",
+    type: "POST",
+    data: {
+      deck: deck
+    }
+  });
+};
 
 /***/ }),
 

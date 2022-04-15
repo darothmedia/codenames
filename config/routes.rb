@@ -2,7 +2,7 @@ Rails.application.routes.draw do
   root :to => 'home#index'
 
   namespace :api, defaults: { format: 'json' } do
-    resources :decks, only: [:index]
+    resources :decks, only: [:index, :create]
 
     post '/:identifier', to: 'games#find_or_create'
 
